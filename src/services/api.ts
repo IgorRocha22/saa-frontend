@@ -27,5 +27,27 @@ export const animalService = {
       console.error('Error fetching animal details:', error);
       throw error;
     }
+  },
+
+  createAnimal: async (animal: Omit<Animal, 'id' | 'createdAt'>): Promise<Animal> => {
+    const response = await fetch(`${API_BASE_URL}/animals`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(animal),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao cadastrar animal');
+    }
+    return await response.json();
+  },
+
+  deleteAnimal: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/animals/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Erro ao excluir animal');
   }
 };

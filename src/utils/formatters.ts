@@ -1,4 +1,4 @@
-import { AnimalSpecies, AnimalGender, AnimalSize, AnimalAge } from '../types/animal';
+import { AnimalSpecies, AnimalGender, AnimalSize, AnimalAge, AnimalStatus } from '../types/animal';
 
 export const formatters = {
   species: (value: AnimalSpecies) => {
@@ -15,6 +15,14 @@ export const formatters = {
   },
   age: (value: AnimalAge) => {
     const map: Record<AnimalAge, string> = { PUPPY: 'Filhote', YOUNG: 'Jovem', ADULT: 'Adulto', SENIOR: 'Sênior' };
+    return map[value] || value;
+  },
+  status: (value: AnimalStatus) => {
+    const map: Record<AnimalStatus, string> = { 
+      AVAILABLE: 'Disponível', 
+      IN_PROCESS: 'Em Processo', 
+      ADOPTED: 'Adotado' 
+    };
     return map[value] || value;
   }
 };
