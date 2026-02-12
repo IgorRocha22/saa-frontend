@@ -1,31 +1,55 @@
-export type AnimalStatus = 'disponivel' | 'em-processo' | 'adotado';
-export type AnimalSpecies = 'cao' | 'gato';
-export type AnimalSize = 'pequeno' | 'medio' | 'grande';
-export type AnimalAge = 'filhote' | 'jovem' | 'adulto' | 'senior';
+export enum AnimalSpecies {
+  DOG = 'DOG',
+  CAT = 'CAT'
+}
+
+export enum AnimalSize {
+  SMALL = 'SMALL',
+  MEDIUM = 'MEDIUM',
+  LARGE = 'LARGE'
+}
+
+export enum AnimalAge {
+  PUPPY = 'PUPPY',
+  YOUNG = 'YOUNG',
+  ADULT = 'ADULT',
+  SENIOR = 'SENIOR'
+}
+
+export enum AnimalGender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE'
+}
+
+export enum AnimalStatus {
+  AVAILABLE = 'AVAILABLE',
+  IN_PROCESS = 'IN_PROCESS',
+  ADOPTED = 'ADOPTED'
+}
 
 export interface Animal {
-  id: string;
+  id: number;
   name: string;
   species: AnimalSpecies;
   breed: string;
   age: AnimalAge;
   size: AnimalSize;
-  gender: 'macho' | 'femea';
-  image: string;
+  gender: AnimalGender;
+  imageUrl: string;
   personality: string;
   healthStatus: string;
   temperament: string[];
   status: AnimalStatus;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface AdoptionRequest {
-  id: string;
-  animalId: string;
+  id?: string;
+  animalId: number;
   applicantName: string;
   applicantEmail: string;
   applicantPhone: string;
   homeDescription: string;
-  status: 'pendente' | 'aprovado' | 'rejeitado';
-  createdAt: Date;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt?: string;
 }

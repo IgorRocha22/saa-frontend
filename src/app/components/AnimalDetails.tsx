@@ -2,6 +2,7 @@ import { ArrowLeft, Heart, Share2, CheckCircle, AlertCircle } from 'lucide-react
 import { useState } from 'react';
 import type { Animal } from '@/types/animal';
 import { AdoptionModal } from './AdoptionModal';
+import { formatters } from '@/utils/formatters';
 
 interface AnimalDetailsProps {
   animal: Animal;
@@ -10,25 +11,6 @@ interface AnimalDetailsProps {
 
 export function AnimalDetails({ animal, onBack }: AnimalDetailsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const getAgeLabel = (age: string) => {
-    const labels = {
-      filhote: 'Filhote',
-      jovem: 'Jovem',
-      adulto: 'Adulto',
-      senior: 'Sênior',
-    };
-    return labels[age as keyof typeof labels] || age;
-  };
-
-  const getSizeLabel = (size: string) => {
-    const labels = {
-      pequeno: 'Pequeno',
-      medio: 'Médio',
-      grande: 'Grande',
-    };
-    return labels[size as keyof typeof labels] || size;
-  };
 
   return (
     <>
@@ -46,18 +28,16 @@ export function AnimalDetails({ animal, onBack }: AnimalDetailsProps) {
           </div>
         </div>
 
-        {/* Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Image */}
             <div className="space-y-4">
               <div className="relative overflow-hidden rounded-2xl shadow-xl">
                 <img
-                  src={animal.image}
+                  src={animal.imageUrl}
                   alt={animal.name}
                   className="w-full h-[500px] object-cover"
                 />
-                {animal.status === 'em-processo' && (
+                {animal.status === 'IN_PROCESS' && (
                   <div className="absolute top-4 left-4">
                     <span className="inline-flex items-center rounded-full bg-[#FFA940] px-4 py-2 text-sm font-medium text-white shadow-lg">
                       Em Processo de Adoção
@@ -83,23 +63,23 @@ export function AnimalDetails({ animal, onBack }: AnimalDetailsProps) {
             <div className="space-y-6">
               <div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">{animal.name}</h1>
-                <p className="text-xl text-gray-600">{animal.breed}</p>
+                <p className="text-xl text-gray-600">{formatters.species(animal.species)}</p>
               </div>
 
               {/* Quick Info */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-white rounded-xl p-4 border border-gray-200 text-center">
                   <p className="text-sm text-gray-500 mb-1">Idade</p>
-                  <p className="font-semibold text-gray-900">{getAgeLabel(animal.age)}</p>
+                  <p className="font-semibold text-gray-900">{formatters.age(animal.age)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 border border-gray-200 text-center">
                   <p className="text-sm text-gray-500 mb-1">Porte</p>
-                  <p className="font-semibold text-gray-900">{getSizeLabel(animal.size)}</p>
+                  <p className="font-semibold text-gray-900">{formatters.size(animal.size)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 border border-gray-200 text-center">
                   <p className="text-sm text-gray-500 mb-1">Sexo</p>
                   <p className="font-semibold text-gray-900">
-                    {animal.gender === 'macho' ? 'Macho' : 'Fêmea'}
+                    {formatters.gender(animal.gender) === 'macho' ? 'Macho' : 'Fêmea'}
                   </p>
                 </div>
               </div>
@@ -151,14 +131,14 @@ export function AnimalDetails({ animal, onBack }: AnimalDetailsProps) {
               {/* Adoption Button */}
               <button
                 onClick={() => setIsModalOpen(true)}
-                disabled={animal.status === 'em-processo'}
+                disabled={animal.status === 'IN_PROCESS'}
                 className={`w-full rounded-xl px-6 py-4 text-lg font-semibold shadow-lg transition-all ${
-                  animal.status === 'em-processo'
+                  animal.status === 'IN_PROCESS'
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-[#52C41A] text-white hover:bg-[#42A010] hover:shadow-xl'
                 }`}
               >
-                {animal.status === 'em-processo' ? 'Adoção Em Processo' : 'Quero Adotar'}
+                {animal.status === 'IN_PROCESS' ? 'Adoção Em Processo' : 'Quero Adotar'}
               </button>
             </div>
           </div>

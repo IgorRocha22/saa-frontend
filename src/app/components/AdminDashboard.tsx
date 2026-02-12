@@ -163,7 +163,7 @@ export function AdminDashboard({ animals, onBack, onUpdateAnimals }: AdminDashbo
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={animal.image}
+                              src={animal.imageUrl}
                               alt={animal.name}
                               className="h-12 w-12 rounded-full object-cover"
                             />

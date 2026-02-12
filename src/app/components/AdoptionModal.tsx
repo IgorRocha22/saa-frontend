@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import type { Animal } from '@/types/animal';
+import { formatters } from '@/utils/formatters';
 
 interface AdoptionModalProps {
   animal: Animal;
@@ -45,13 +46,13 @@ export function AdoptionModal({ animal, isOpen, onClose }: AdoptionModalProps) {
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <img
-              src={animal.image}
+              src={animal.imageUrl}
               alt={animal.name}
               className="h-16 w-16 rounded-full object-cover"
             />
             <div>
               <h3 className="font-semibold text-gray-900">{animal.name}</h3>
-              <p className="text-sm text-gray-500">{animal.breed}</p>
+              <p className="text-sm text-gray-500">{formatters.species(animal.species)}</p>
             </div>
           </div>
 
