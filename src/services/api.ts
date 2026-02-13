@@ -2,6 +2,12 @@ import { Animal } from '@/types/animal';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
+// Placeholder for authentication token retrieval
+const getAuthToken = () => {
+  // In a real app, you would get this from localStorage, a cookie, or state management
+  return 'dummy-jwt-token';
+};
+
 export const animalService = {
   getAllAnimals: async (): Promise<Animal[]> => {
     try {
@@ -30,10 +36,12 @@ export const animalService = {
   },
 
   createAnimal: async (animal: Omit<Animal, 'id' | 'createdAt'>): Promise<Animal> => {
+    const token = getAuthToken();
     const response = await fetch(`${API_BASE_URL}/animals`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(animal),
     });
@@ -44,9 +52,30 @@ export const animalService = {
     return await response.json();
   },
 
+  updateAnimal: async (id: number, animal: Animal): Promise<Animal> => {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/animals/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(animal),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar animal');
+    }
+    return await response.json();
+  },
+
   deleteAnimal: async (id: number): Promise<void> => {
+    const token = getAuthToken();
     const response = await fetch(`${API_BASE_URL}/animals/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (!response.ok) throw new Error('Erro ao excluir animal');
   }
