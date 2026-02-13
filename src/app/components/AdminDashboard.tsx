@@ -89,6 +89,32 @@ export function AdminDashboard() {
     window.location.href = '/';
   };
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Tem certeza que deseja excluir este animal?')) {
+      try {
+        await animalService.deleteAnimal(id);
+        setAnimals(prev => prev.filter(animal => animal.id !== id));
+        alert('Animal excluído com sucesso.');
+      } catch (error) {
+        console.error(error);
+        alert('Erro ao excluir animal.');
+      }
+    }
+  };
+
+  const handleStatusChange = async (id: number, newStatus: AnimalStatus) => {
+    const animalToUpdate = animals.find(animal => animal.id === id);
+    if (!animalToUpdate) return;
+
+    try {
+      const updatedAnimal = await animalService.updateAnimal(id, { ...animalToUpdate, status: newStatus });
+      setAnimals(prev => prev.map(animal => (animal.id === id ? updatedAnimal : animal)));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao atualizar status.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
@@ -277,11 +303,17 @@ export function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{animal.breed}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium 
-                          ${animal.status === AnimalStatus.AVAILABLE ? 'bg-green-100 text-green-700' :
-                            animal.status === AnimalStatus.ADOPTED ? 'bg-gray-100 text-gray-700' : 'bg-amber-100 text-amber-700'}`}>
-                          {formatters.status(animal.status)}
-                        </span>
+                        <select
+                          value={animal.status}
+                          onChange={(e) => handleStatusChange(animal.id, e.target.value as AnimalStatus)}
+                          className={`px-2 py-1 rounded-full text-xs font-medium border-transparent focus:ring-2 focus:ring-offset-2 focus:ring-[#4A90E2]
+                            ${animal.status === AnimalStatus.AVAILABLE ? 'bg-green-100 text-green-700' :
+                              animal.status === AnimalStatus.ADOPTED ? 'bg-gray-100 text-gray-700' : 'bg-amber-100 text-amber-700'}`}
+                        >
+                          <option value={AnimalStatus.AVAILABLE}>Disponível</option>
+                          <option value={AnimalStatus.IN_PROCESS}>Em Processo</option>
+                          <option value={AnimalStatus.ADOPTED}>Adotado</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {new Date(animal.createdAt).toLocaleDateString()}
@@ -290,7 +322,7 @@ export function AdminDashboard() {
                         <button className="text-gray-400 hover:text-[#4A90E2] mr-3">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-400 hover:text-red-500">
+                        <button onClick={() => handleDelete(animal.id)} className="text-gray-400 hover:text-red-500">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </td>
