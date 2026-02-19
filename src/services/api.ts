@@ -6,10 +6,12 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  let token = localStorage.getItem('token');
+  if (!token) {
+    // Dummy token for development when auth is not implemented yet
+    token = 'dummy_token';
   }
+  config.headers.Authorization = `Bearer ${token}`;
   return config;
 }, error => {
   return Promise.reject(error);
