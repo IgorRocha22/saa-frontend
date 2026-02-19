@@ -1,57 +1,29 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { Home } from './components/Home';
-import { AnimalDetails } from './components/AnimalDetails';
-import { AdminDashboard } from './components/AdminDashboard';
-import { mockAnimals } from '@/data/mockAnimals';
-import type { Animal } from '@/types/animal';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AnimalGallery from '../../app/features/animal-gallery/AnimalGallery';
+import AnimalDetails from '../../app/features/animal-details/AnimalDetails';
+import AdminDashboard from '../../app/features/admin-dashboard/AdminDashboard';
+import NotFound from '../../app/features/not-found/NotFound';
+import Header from '../../app/components/header/Header';
+import Footer from '../../app/components/footer/Footer';
 
-type View = 'home' | 'details' | 'admin';
-
-export default function App() {
-  const [currentView, setCurrentView] = useState<View>('home');
-  const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
-  const [animals, setAnimals] = useState<Animal[]>(mockAnimals);
-
-  const handleAnimalClick = (animal: Animal) => {
-    setSelectedAnimal(animal);
-    setCurrentView('details');
-  };
-
-  const handleBackToHome = () => {
-    setCurrentView('home');
-    setSelectedAnimal(null);
-  };
-
-  const handleAdminClick = () => {
-    setCurrentView('admin');
-  };
-
-  const handleBackFromAdmin = () => {
-    setCurrentView('home');
-  };
-
+const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
-      {currentView !== 'admin' && (
-        <Header onAdminClick={handleAdminClick} />
-      )}
-      
-      {currentView === 'home' && (
-        <Home animals={animals} onAnimalClick={handleAnimalClick} />
-      )}
-      
-      {currentView === 'details' && selectedAnimal && (
-        <AnimalDetails animal={selectedAnimal} onBack={handleBackToHome} />
-      )}
-      
-      {currentView === 'admin' && (
-        <AdminDashboard
-          animals={animals}
-          onBack={handleBackFromAdmin}
-          onUpdateAnimals={setAnimals}
-        />
-      )}
-    </div>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<AnimalGallery />} />
+            <Route path="/animal/:id" element={<AnimalDetails />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
-}
+};
+
+export default App;
