@@ -1,21 +1,32 @@
+import axios from 'axios';
 import { Animal } from '@/types/animal';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+});
 
-// Placeholder for authentication token retrieval
-const getAuthToken = () => {
-  // In a real app, you would get this from localStorage, a cookie, or state management
-  return 'dummy-jwt-token';
-};
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
+api.interceptors.response.use(response => {
+  return response;
+}, error => {
+  console.error('An error occurred with the API request:', error);
+  return Promise.reject(error);
+});
 
 export const animalService = {
   getAllAnimals: async (): Promise<Animal[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/animals`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch animals');
-      }
-      return await response.json();
+      const response = await api.get('/animals');
+      return response.data;
     } catch (error) {
       console.error('Error fetching animals:', error);
       throw error;
@@ -24,11 +35,8 @@ export const animalService = {
 
   getAnimalById: async (id: string): Promise<Animal> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/animals/${id}`);
-      if (!response.ok) {
-        throw new Error('Animal not found');
-      }
-      return await response.json();
+      const response = await api.get(`/animals/${id}`);
+      return response.data;
     } catch (error) {
       console.error('Error fetching animal details:', error);
       throw error;
@@ -36,47 +44,31 @@ export const animalService = {
   },
 
   createAnimal: async (animal: Omit<Animal, 'id' | 'createdAt'>): Promise<Animal> => {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/animals`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(animal),
-    });
-
-    if (!response.ok) {
-      throw new Error('Erro ao cadastrar animal');
+    try {
+      const response = await api.post('/animals', animal);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating animal:', error);
+      throw error;
     }
-    return await response.json();
   },
 
   updateAnimal: async (id: number, animal: Animal): Promise<Animal> => {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/animals/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(animal),
-    });
-
-    if (!response.ok) {
-      throw new Error('Erro ao atualizar animal');
+    try {
+      const response = await api.put(`/animals/${id}`, animal);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating animal:', error);
+      throw error;
     }
-    return await response.json();
   },
 
   deleteAnimal: async (id: number): Promise<void> => {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/animals/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error('Erro ao excluir animal');
+    try {
+      await api.delete(`/animals/${id}`);
+    } catch (error) {
+      console.error('Error deleting animal:', error);
+      throw error;
+    }
   }
 };
