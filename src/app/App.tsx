@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AnimalGallery from '@/app/features/animal-gallery/AnimalGallery';
-import AnimalDetails from '@/app/features/animal-details/AnimalDetails';
-import AdminDashboard from '@/app/features/admin-dashboard/AdminDashboard';
-import NotFound from '@/app/features/not-found/NotFound';
-import Header from '@/app/components/header/Header';
-import Footer from '@/app/components/footer/Footer';
+import AnimalGallery from '../../app/features/animal-gallery/AnimalGallery';
+import AnimalDetails from '../../app/features/animal-details/AnimalDetails';
+import AdminDashboard from '../../app/features/admin-dashboard/AdminDashboard';
+import NotFound from '../../app/features/not-found/NotFound';
+import Header from '../../app/components/header/Header';
+import Footer from '../../app/components/footer/Footer';
 
 const App: React.FC = () => {
   return (
